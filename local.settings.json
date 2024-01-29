@@ -1,0 +1,15 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+      "FUNCTIONS_WORKER_RUNTIME": "python",
+      "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
+      "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=poojaoktatestbe30;AccountKey=IDJEhdsLHcDRAJLTN5YeHtW+PEULRBIOWo9EHo2dRj4r3cE4RnGw+gVGqU/r68tOqPyhSRfz7iwj+AStK2WGsg==;EndpointSuffix=core.windows.net",
+      "APPLICATION_NAME": "lm-logs-azure",
+      "OKTA_DOMAIN": "logicmonitorpreview.oktapreview.com",
+      "COMPANY_NAME": "lmpoojachoudhary",
+      "LM_RESOURCE_ID":"{\"system.deviceId\" : \"688994\"}",
+      "INCLUDE_METADATA_KEYS": "true",
+      "LM_SERVICE_NAME_KEY":""
+      
+    }
+  }
