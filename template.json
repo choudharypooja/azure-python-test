@@ -169,10 +169,6 @@
               "value" : "[parameters('LM_BEARER_TOKEN')]"
             },
             {
-                        "name": "OKTA_API_KEY",
-                        "value": "00c2SamWJ6AiRS9TByggjjrcPtlDDTO3JCakkvPT_W"
-                    },
-            {
               "name": "APPLICATION_NAME",
               "value": "lm-logs-okta"
             },
