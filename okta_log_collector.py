@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 import helper as hp
 import log_ingester
 import msgspec_okta_event
+import constants as const
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -18,7 +19,7 @@ RETRIES = "next_link_retries"
 MAX_RETRIES = 3
 BACK_FILL_DURATION_MINUTES = 2
 domain = hp.get_attr_from_env("OKTA_DOMAIN")#"logicmonitorpreview.oktapreview.com"#hp.get_attr_from_env(const.OKTA_DOMAIN)
-api_key = "00c2SamWJ6AiRS9TByggjjrcPtlDDTO3JCakkvPT_W"#hp.get_required_attr_from_env(const.OKTA_API_KEY)
+api_key = hp.get_required_attr_from_env(const.OKTA_API_KEY)
         #self.log_ingester = log_ingester.LogIngester()
 back_fill_dur_min = BACK_FILL_DURATION_MINUTES
 retry_attempt = 0

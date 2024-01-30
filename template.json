@@ -1,0 +1,231 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    "LM_Company_name": {
+      "type": "string",
+      "defaultValue":"lmpoojachoudhary"
+    },
+    "LM_ACCESS_ID": {
+      "type": "string",
+      "defaultValue":""
+    },
+    "LM_ACCESS_KEY": {
+      "type": "string",
+      "defaultValue":""
+    },
+    "LM_BEARER_TOKEN": {
+      "type": "string",
+      "defaultValue":""
+    },
+    
+    "INCLUDE_METADATA_KEYS": {
+      "type": "string",
+      "defaultValue":""
+    },
+    "azure_region": {
+      "type": "string"
+    },
+    "OKTA_API_KEY":{
+      "type": "string",
+      "defaultValue":""
+    },
+    "OKTA_DOMAIN":{
+      "type": "string",
+      "defaultValue":"logicmonitorpreview.oktapreview.com"
+    },
+    "LM_SERVICE_NAME_KEY":{
+      "type": "string",
+      "defaultValue":""
+    },
+        "storageAccountName":{
+            "type": "string"
+            
+        },
+        "serverFarmeName": {
+            "type": "string"
+           
+        },
+        "applicationInsightsName": {
+            "type": "string"
+           
+        },
+        "functionAppName":{
+            "type" : "string"
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+    {
+        "type" : "Microsoft.Storage/storageAccounts",
+        "apiVersion": "2021-08-01",
+        "name":"[parameters('storageAccountName')]",
+        "kind": "Storage",
+        "location":"[resourceGroup().location]",
+        "sku": {
+            "name": "Standard_LRS",
+            "tier": "Standard"
+        },
+        "properties": {
+          "minimumTlsVersion":"TLS1_2"
+        }
+    },
+    {
+        "type": "Microsoft.Web/serverfarms",
+        "apiVersion": "2021-03-01",
+        "location":"[resourceGroup().location]",
+        "name":"[parameters('serverFarmeName')]",
+        "sku": {
+            "name": "P1v2",
+            "tier": "PremiumV2",
+            "size": "P1v2",
+            "family":"Pv2",
+            "capacity": 1
+        },
+        "properties": {
+            "hyperV": false,
+            "isXenon": false,
+            "reserved": true
+        }
+        
+    },
+    {
+        "type": "Microsoft.Insights/components",
+        "apiVersion": "2020-02-02-preview",
+        "name":"[parameters('applicationInsightsName')]",
+        "location":"[resourceGroup().location]",
+        "properties": {
+            "Application_Type": "web",
+            "DisableIpMasking": true
+        }
+    },
+    {
+        "name": "[parameters('functionAppName')]",
+        "type": "Microsoft.Web/sites",
+        "apiVersion": "2021-03-01",
+        "location": "[resourceGroup().location]",
+        "kind": "functionapp",
+        "dependsOn": [
+            "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+            "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]"
+        ],
+        "properties": {
+            "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverFarmeName'))]",
+            "siteConfig": {
+                "appSettings": [
+                    {
+                        "name": "AzureWebJobsStorage",
+                        "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
+                    },
+                    
+                    {
+                        "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                        "value": "[reference(resourceId('Microsoft.Insights/components',parameters('applicationInsightsName')), '2015-05-01').InstrumentationKey]"
+                    },
+                    {
+                        "name": "FUNCTIONS_WORKER_RUNTIME",
+                        "value": "python"
+                    },
+                    {
+                        "name":"APPLICATIONINSIGHTS_CONNECTION_STRING",
+                        "value":"[reference(resourceId('Microsoft.Insights/components',parameters('applicationInsightsName')),'2015-05-01').ConnectionString]"
+                    },
+                    {
+                        "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                        "value": "~18"
+                    },
+                    {
+                        "name": "ENABLE_ORYX_BUILD",
+                        "value": "true"
+                    },
+                    
+                    {
+                        "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+                        "value": "1"
+                    },
+                    {
+                        "name": "XDG_CACHE_HOME",
+                        "value": "/tmp/.cache"
+                    },
+                    {
+                  "name": "FUNCTIONS_EXTENSION_VERSION",
+                  "value": "~4"
+                },
+            {
+              "name": "COMPANY_NAME",
+              "value": "[parameters('LM_Company_name')]"
+            },
+            {
+              "name" : "LM_ACCESS_ID",
+              "value" : "[parameters('LM_ACCESS_ID')]"
+            },
+            {
+              "name" : "LM_ACCESS_KEY",
+              "value" : "[parameters('LM_ACCESS_KEY')]"
+            },
+            {
+              "name" : "LM_BEARER_TOKEN",
+              "value" : "[parameters('LM_BEARER_TOKEN')]"
+            },
+            {
+                        "name": "OKTA_API_KEY",
+                        "value": "00c2SamWJ6AiRS9TByggjjrcPtlDDTO3JCakkvPT_W"
+                    },
+            {
+              "name": "APPLICATION_NAME",
+              "value": "lm-logs-okta"
+            },
+            {
+              "name": "INCLUDE_METADATA_KEYS",
+              "value" : "[parameters('INCLUDE_METADATA_KEYS')]"
+            },
+            {
+              "name": "LOG_LEVEL",
+              "value" : "WARNING"
+            },
+            {
+              "name":"OKTA_API_KEY",
+              "value": "[parameters('OKTA_API_KEY')]"
+            },
+            {
+              "name":"OKTA_DOMAIN",
+              "value": "[parameters('OKTA_DOMAIN')]"
+            },
+            {
+              "name":"LM_SERVICE_NAME_KEY",
+              "value": "[parameters('LM_SERVICE_NAME_KEY')]"
+            },
+            {
+              "name":"AzureWebJobsFeatureFlags",
+              "value": "EnableWorkerIndexing"
+            },
+            {
+              "name":"BUILD_FLAGS",
+              "value": "UseExpressBuild"
+            }
+                ],
+                "linuxFxVersion": "PYTHON|3.9",
+                "alwaysOn": true,
+                "use32BitWorkerProcess": true
+            }
+        },
+        "resources" :[
+            {
+                "type": "sourcecontrols",
+                "apiVersion": "2022-09-01",
+                "name":"web",
+                "dependsOn": [
+                    "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
+                ],
+                "properties": {
+                    "branch":"main", 
+                    "repoUrl": "https://github.com/choudharypooja/azure-python-test.git", 
+                    "isManualIntegration": true
+                }
+            }
+        ]
+    }
+    ],
+    "outputs": {}
+}
